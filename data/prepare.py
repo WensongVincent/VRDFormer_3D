@@ -101,8 +101,8 @@ def generate_vrd_annos(root_dir, dbname):
 
     anno_files = []
     for split in ["train", "val"]:
-        anno_files += glob.glob("%s/%s/annotations/%s/*.json"%(root_dir, dbname.replace("part", ""), split))
-
+        anno_files += glob.glob("%s/%s/annotations/%s/**/*.json"%(root_dir, dbname.replace("part", ""), split))
+    # import pdb; pdb.set_trace()
     vrd_anno = dict()
     video_num = 0
     for anno_file in tqdm(anno_files):
@@ -180,16 +180,20 @@ def generate_vrd_annos(root_dir, dbname):
                                     "so_track_ids": so_traj_ids, "sub_boxes": sboxes, "obj_boxes": oboxes}
     
         vrd_anno[vid] = {"frame_annos": each_frame_dict, "rel_tag_uids": rel_tag_uids}
-
+    # import pdb; pdb.set_trace()
     with open("metadata/%s_annotations.pkl"%(dbname), "wb") as f:
         pkl.dump(vrd_anno, f)
+        # total_bytes = len(pkl.dumps(vrd_anno))
+        # with tqdm(total=total_bytes, unit='B', unit_scale=True, dynamic_ncols=True) as pbar:
+        #     pkl.dump(vrd_anno, f)
+        #     pbar.update(total_bytes - pbar.n)
         
     
 def get_trainval_frameids(root_dir, dbname, split, timestep, min_max_duration=32, stage=1):
     anno_files = []
 
     anno_files += glob.glob("%s/%s/annotations/%s/*.json"%(root_dir, dbname.replace("part", ""), split))
-    print(len(anno_files))
+    print(f"Length of annotation file: {len(anno_files)}")
     
     with open("metadata/%s_annotations.pkl"%dbname, "rb") as f:
         meta_anno = pkl.load(f)
@@ -280,11 +284,11 @@ def get_trainval_frameids(root_dir, dbname, split, timestep, min_max_duration=32
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("Prepare Data", add_help=False)
     parser.add_argument("--func", type=str)
-    parser.add_argument("--root_dir", default="/home/zhengsipeng/data", type=str)
+    parser.add_argument("--root_dir", default="/home/umhws/VRDFormer_3D/data", type=str)
     parser.add_argument("--dbname", default="vidvrd", type=str, choices=["vidvrd", "vidor", "vidorpart"])
     parser.add_argument("--split", default="train", type=str, choices=["train", "val"])
-    parser.add_argument("--timestep", default=1, type=int)  # 1 for vidvrd, 8 for vidor
-    parser.add_argument("--minmax_dur", default=24, type=int) # 24 for vidvrd, 32 for vidor
+    parser.add_argument("--timestep", default=8, type=int)  # 1 for vidvrd, 8 for vidor
+    parser.add_argument("--minmax_dur", default=32, type=int) # 24 for vidvrd, 32 for vidor
     parser.add_argument("--stage", default=1, type=int)
     args = parser.parse_args()
     

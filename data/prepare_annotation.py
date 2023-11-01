@@ -275,9 +275,9 @@ def get_max_numpair_frame(dbname):
           
 
 if __name__ == "__main__":
-    root_dir = "/data2/zsp/data/"
+    root_dir = "/home/umhws/VRDFormer_3D/data"
     func = 0
-    dbname = "vidvrd" # vidvrd, vidor, vidor_part 
+    dbname = "vidor" # vidvrd, vidor, vidor_part 
     #check_annotation(dbname)
     if func == 0:
         split, timestep, min_max_duration = sys.argv[1:]
